@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Realtime Chat Test</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+    <style>
+        html, body {
+            font-family: "Nunito", sans-serif;
+        }
+    </style>
+</head>
+<body>
+<form class="form-inline p-3" id="form">
+    <input type="text" name="name"
+           class="form-control mr-2" placeholder="Name">
+    <input type="text" name="message" class="form-control mr-2"
+           placeholder="Type message here...">
+    <button class="btn btn-primary">
+        <i class="fa fa-paper-plane"></i>
+    </button>
+</form>
+
+<ul class="nav flex-column w-100 border-top" id="messages">
+
+</ul>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+    const socket = io();
+
+    let fetched = false;
+
+    socket.emit('fetchMessages');
+
+    $('#form').submit(() => {
+        let data = {
+            name: $('#form input[name="name"]').val(),
+            message: $('#form input[name="message"]').val(),
+        };
+
+        socket.emit('receiveNewMessage', data);
+        $('#form input[name="name"]').val('');
+        $('#form input[name="message"]').val('');
+
+        return false;
+    });
+
+    socket.on('fetchedMessages', (data) => {
+        if (!fetched) {
+            data.map((dataItem) => {
+                $('#messages').append($('<li class="nav-item p-3 border-bottom">').text(dataItem.name + ' : ' + dataItem.message));
+            });
+        }
+
+        fetched = true;
+    });
+
+    socket.on('receivedNewMessage', (data) => {
+        $('#messages').append($('<li class="nav-item p-3 border-bottom">').text(data.name + ' : ' + data.message));
+    });
+</script>
+</body>
+</html>
