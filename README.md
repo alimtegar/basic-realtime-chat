@@ -1,5 +1,5 @@
-# Basic Realtime Chat
-Basic realtime chat with NodeJS, Socket.io and MySQL
+# Simple Realtime Chat
+Simple realtime chat with NodeJS, Socket.io and MySQL
 
 ## Prerequisites
 
