@@ -1,4 +1,4 @@
-const app =  require('express')();
+const app = require('express')();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const mysql = require('mysql');
@@ -21,6 +21,7 @@ con.connect((err) => {
     });
 
     io.on('connection', (socket) => {
+        /* Fetch messages */
         socket.on('fetchMessages', () => {
             const sql = `SELECT * FROM messages`;
             con.query(sql, (err, result, fields) => {
@@ -30,6 +31,7 @@ con.connect((err) => {
             });
         });
 
+        /* Receive new messages */
         socket.on('receiveNewMessage', (data) => {
             const sql = `INSERT INTO messages (name, message) VALUES ('${data.name}', '${data.message}')`;
             con.query(sql, (err, result) => {
@@ -40,12 +42,14 @@ con.connect((err) => {
             });
         });
 
+        /* Disconnect */
         socket.on('disconnect', () => {
             console.log('Disconnected');
         });
     });
 });
 
+/* Listening on port 3000 */
 http.listen(3000, () => {
-   console.log('Listening on 3000');
+    console.log('Listening on 3000');
 });

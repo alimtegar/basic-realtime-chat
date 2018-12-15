@@ -35,8 +35,10 @@
 
     let fetched = false;
 
+    /* Fetch messages when page first loaded */
     socket.emit('fetchMessages');
 
+    /* Submitting message to server */
     $('#form').submit(() => {
         let data = {
             name: $('#form input[name="name"]').val(),
@@ -50,6 +52,8 @@
         return false;
     });
 
+
+    /* Display all messages */
     socket.on('fetchedMessages', (data) => {
         if (!fetched) {
             data.map((dataItem) => {
@@ -60,6 +64,7 @@
         fetched = true;
     });
 
+    /* Display message after submitting new message */
     socket.on('receivedNewMessage', (data) => {
         $('#messages').append($('<li class="nav-item p-3 border-bottom">').text(data.name + ' : ' + data.message));
     });
